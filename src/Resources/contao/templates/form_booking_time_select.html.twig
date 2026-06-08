@@ -1,0 +1,59 @@
+{% set error_id = 'ctrl_' ~ this.id ~ '_error' %}
+{% set has_errors = hasErrors.invoke() %}
+
+{% block widget %}
+    <div
+        class="{{ getWrapperClass.invoke() }}"
+        data-label-floating="false"
+        data-is-valid="{{ has_errors ? 'false' : 'null' }}"
+    >
+        {% block label %}
+            {% if this.label %}
+                <label for="ctrl_{{ this.id }}" class="{{ getLabelClass.invoke() }}">
+                    {% if this.mandatory %}
+                        <span class="invisible">{{ this.mandatoryField }} </span>{{ this.label }}<span class="mandatory">*</span>
+                    {% else %}
+                        {{ this.label }}
+                    {% endif %}
+                </label>
+            {% endif %}
+        {% endblock %}
+
+        {% block field %}
+            {% if has_errors %}
+                <p class="error booking-time-select__error" id="{{ error_id }}">{{ getErrorAsString.invoke() }}</p>
+            {% endif %}
+
+            {% if this.multiple %}
+                <input
+                    type="hidden"
+                    class="booking-time-select__empty-input"
+                    name="{{ this.name ends with '[]' ? this.name|slice(0, -2) : this.name }}"
+                    value=""
+                >
+            {% endif %}
+
+            <select
+                name="{{ this.name }}"
+                id="ctrl_{{ this.id }}"
+                class="{{ getControlClass.invoke() }}"
+                {% if has_errors %}aria-describedby="{{ error_id }}"{% endif %}
+                {{ getAttributes.invoke()|raw }}
+            >
+                {% for option in getOptions.invoke() %}
+                    {% if option.type == 'group_start' %}
+                        <optgroup class="booking-time-select__group" label="{{ option.label }}">
+                    {% endif %}
+
+                    {% if option.type == 'option' %}
+                        <option class="booking-time-select__option" value="{{ option.value }}"{{ option.selected|raw }}>{{ option.label }}</option>
+                    {% endif %}
+
+                    {% if option.type == 'group_end' %}
+                        </optgroup>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        {% endblock %}
+    </div>
+{% endblock %}

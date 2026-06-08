@@ -1,0 +1,36 @@
+{
+    "name": "dvc/booking_calendar_fields",
+    "description": "Adds accessible booking calendar and booking time fields to the Contao form generator.",
+    "keywords": [
+        "contao",
+        "contao-bundle",
+        "form",
+        "booking",
+        "calendar"
+    ],
+    "type": "contao-bundle",
+    "version": "1.0.0",
+    "license": "LGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Timo Werlich",
+            "email": "twe@d-v-c.net"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "contao/core-bundle": "^5.3",
+        "contao/manager-plugin": "^2.3"
+    },
+    "conflict": {
+        "contao/manager-plugin": "<2.0 || >=3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "DVC\\BookingCalendarFields\\": "src/"
+        }
+    },
+    "extra": {
+        "contao-manager-plugin": "DVC\\BookingCalendarFields\\ContaoManager\\Plugin"
+    }
+}

@@ -1,0 +1,131 @@
+{% set label_id = 'ctrl_' ~ this.id ~ '_label' %}
+{% set error_id = 'ctrl_' ~ this.id ~ '_error' %}
+{% set field_id = 'ctrl_' ~ this.id %}
+{% set translations = this.getTranslations() %}
+{% set has_errors = hasErrors.invoke() %}
+
+{% block widget %}
+    <div class="{{ this.getWrapperClass() }}">
+        {% block label %}
+            {% if this.label %}
+                <label id="{{ label_id }}" class="{{ this.getLabelClass() }}">
+                    {% if this.mandatory %}
+                        <span class="invisible">{{ this.mandatoryField }} </span>{{ this.label }}<span class="mandatory">*</span>
+                    {% else %}
+                        {{ this.label }}
+                    {% endif %}
+                </label>
+            {% endif %}
+        {% endblock %}
+
+        {% block field %}
+            {% if has_errors %}
+                <p class="error booking-calendar-field__error" id="{{ error_id }}">{{ getErrorAsString.invoke() }}</p>
+            {% endif %}
+
+            <div
+                class="booking-calendar-field"
+                data-booking-calendar-field
+                data-disabled-weekdays="{{ this.getDisabledWeekdaysJson()|raw }}"
+                data-month-year-dropdowns="{{ this.isMonthYearDropdownEnabled() ? 'true' : 'false' }}"
+                data-max-bookable-date="{{ this.getMaxBookableDateIso() }}"
+                data-translations="{{ this.getTranslationsJson()|raw }}"
+                role="group"
+                aria-labelledby="{{ label_id }}"
+                {% if has_errors %}aria-describedby="{{ error_id }}"{% endif %}
+            >
+                <input
+                    type="hidden"
+                    name="{{ this.name }}"
+                    id="{{ field_id }}"
+                    class="booking-calendar-field__input"
+                    value="{{ this.getIsoValue() }}"
+                    data-booking-calendar-input
+                    {% if this.mandatory %}data-required="true"{% endif %}
+                >
+
+                <div class="booking-calendar-field__header">
+                    <button
+                        type="button"
+                        class="booking-calendar-field__nav booking-calendar-field__nav--prev"
+                        data-calendar-prev
+                        aria-label="{{ translations.previousMonth }}"
+                    ></button>
+
+                    <div class="booking-calendar-field__current">
+                        {% if this.isMonthYearDropdownEnabled() %}
+                            <button
+                                type="button"
+                                class="booking-calendar-field__current-button booking-calendar-field__current-button--month"
+                                data-calendar-month-button
+                                aria-haspopup="listbox"
+                                aria-expanded="false"
+                                aria-label="{{ translations.monthSelect }}"
+                            ></button>
+                            <select
+                                class="booking-calendar-field__current-select booking-calendar-field__current-select--month"
+                                data-calendar-month-select
+                                aria-label="{{ translations.monthSelect }}"
+                                hidden
+                            ></select>
+                        {% else %}
+                            <span
+                                class="booking-calendar-field__current-button booking-calendar-field__current-button--month booking-calendar-field__current-text booking-calendar-field__current-text--month"
+                                data-calendar-month-button
+                            ></span>
+                        {% endif %}
+
+                        {% if this.isMonthYearDropdownEnabled() %}
+                            <button
+                                type="button"
+                                class="booking-calendar-field__current-button booking-calendar-field__current-button--year"
+                                data-calendar-year-button
+                                aria-haspopup="listbox"
+                                aria-expanded="false"
+                                aria-label="{{ translations.yearSelect }}"
+                            ></button>
+                            <select
+                                class="booking-calendar-field__current-select booking-calendar-field__current-select--year"
+                                data-calendar-year-select
+                                aria-label="{{ translations.yearSelect }}"
+                                hidden
+                            ></select>
+                        {% else %}
+                            <span
+                                class="booking-calendar-field__current-button booking-calendar-field__current-button--year booking-calendar-field__current-text booking-calendar-field__current-text--year"
+                                data-calendar-year-button
+                            ></span>
+                        {% endif %}
+                    </div>
+
+                    <button
+                        type="button"
+                        class="booking-calendar-field__nav booking-calendar-field__nav--next"
+                        data-calendar-next
+                        aria-label="{{ translations.nextMonth }}"
+                    ></button>
+                </div>
+
+                <table class="booking-calendar-field__grid" role="grid" aria-labelledby="{{ label_id }}">
+                    <thead class="booking-calendar-field__head">
+                        <tr class="booking-calendar-field__weekdays" data-calendar-weekdays></tr>
+                    </thead>
+                    <tbody class="booking-calendar-field__body" data-calendar-grid></tbody>
+                </table>
+
+                <p class="invisible booking-calendar-field__status" aria-live="polite" data-calendar-status></p>
+
+                <noscript class="booking-calendar-field__noscript">
+                    <input
+                        type="date"
+                        class="booking-calendar-field__noscript-input"
+                        name="{{ this.name }}"
+                        value="{{ this.getIsoValue() }}"
+                        aria-labelledby="{{ label_id }}"
+                        {% if this.mandatory %}required{% endif %}
+                    >
+                </noscript>
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

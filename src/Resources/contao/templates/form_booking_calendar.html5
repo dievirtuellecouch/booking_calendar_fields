@@ -1,0 +1,130 @@
+<?php $this->extend('form_row'); ?>
+
+<?php
+$labelId = 'ctrl_' . $this->id . '_label';
+$errorId = 'ctrl_' . $this->id . '_error';
+$fieldId = 'ctrl_' . $this->id;
+$translations = json_decode(htmlspecialchars_decode($this->getTranslationsJson(), ENT_QUOTES), true) ?: [];
+?>
+
+<?php $this->block('label'); ?>
+  <?php if ($this->label): ?>
+    <label id="<?= $labelId ?>" class="<?= $this->getLabelClass() ?>">
+      <?php if ($this->mandatory): ?>
+        <span class="invisible"><?= $this->mandatoryField ?> </span><?= $this->label ?><span class="mandatory">*</span>
+      <?php else: ?>
+        <?= $this->label ?>
+      <?php endif; ?>
+    </label>
+  <?php endif; ?>
+<?php $this->endblock(); ?>
+
+<?php $this->block('field'); ?>
+  <?php if ($this->hasErrors()): ?>
+    <p class="error booking-calendar-field__error" id="<?= $errorId ?>"><?= $this->getErrorAsString() ?></p>
+  <?php endif; ?>
+
+  <div
+    class="booking-calendar-field"
+    data-booking-calendar-field
+    data-disabled-weekdays="<?= $this->getDisabledWeekdaysJson() ?>"
+    data-month-year-dropdowns="<?= $this->isMonthYearDropdownEnabled() ? 'true' : 'false' ?>"
+    data-max-bookable-date="<?= Contao\StringUtil::specialchars($this->getMaxBookableDateIso()) ?>"
+    data-translations="<?= $this->getTranslationsJson() ?>"
+    role="group"
+    aria-labelledby="<?= $labelId ?>"
+    <?php if ($this->hasErrors()): ?>aria-describedby="<?= $errorId ?>"<?php endif; ?>
+  >
+    <input
+      type="hidden"
+      name="<?= Contao\StringUtil::specialchars($this->name) ?>"
+      id="<?= $fieldId ?>"
+      class="booking-calendar-field__input"
+      value="<?= Contao\StringUtil::specialchars($this->getIsoValue()) ?>"
+      data-booking-calendar-input
+      <?php if ($this->mandatory): ?>data-required="true"<?php endif; ?>
+    >
+
+    <div class="booking-calendar-field__header">
+      <button
+        type="button"
+        class="booking-calendar-field__nav booking-calendar-field__nav--prev"
+        data-calendar-prev
+        aria-label="<?= Contao\StringUtil::specialchars($translations['previousMonth'] ?? 'Previous month') ?>"
+      ></button>
+
+      <div class="booking-calendar-field__current">
+        <?php if ($this->isMonthYearDropdownEnabled()): ?>
+          <button
+            type="button"
+            class="booking-calendar-field__current-button booking-calendar-field__current-button--month"
+            data-calendar-month-button
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-label="<?= Contao\StringUtil::specialchars($translations['monthSelect'] ?? 'Select month') ?>"
+          ></button>
+          <select
+            class="booking-calendar-field__current-select booking-calendar-field__current-select--month"
+            data-calendar-month-select
+            aria-label="<?= Contao\StringUtil::specialchars($translations['monthSelect'] ?? 'Select month') ?>"
+            hidden
+          ></select>
+        <?php else: ?>
+          <span
+            class="booking-calendar-field__current-button booking-calendar-field__current-button--month booking-calendar-field__current-text booking-calendar-field__current-text--month"
+            data-calendar-month-button
+          ></span>
+        <?php endif; ?>
+
+        <?php if ($this->isMonthYearDropdownEnabled()): ?>
+          <button
+            type="button"
+            class="booking-calendar-field__current-button booking-calendar-field__current-button--year"
+            data-calendar-year-button
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-label="<?= Contao\StringUtil::specialchars($translations['yearSelect'] ?? 'Select year') ?>"
+          ></button>
+          <select
+            class="booking-calendar-field__current-select booking-calendar-field__current-select--year"
+            data-calendar-year-select
+            aria-label="<?= Contao\StringUtil::specialchars($translations['yearSelect'] ?? 'Select year') ?>"
+            hidden
+          ></select>
+        <?php else: ?>
+          <span
+            class="booking-calendar-field__current-button booking-calendar-field__current-button--year booking-calendar-field__current-text booking-calendar-field__current-text--year"
+            data-calendar-year-button
+          ></span>
+        <?php endif; ?>
+      </div>
+
+      <button
+        type="button"
+        class="booking-calendar-field__nav booking-calendar-field__nav--next"
+        data-calendar-next
+        aria-label="<?= Contao\StringUtil::specialchars($translations['nextMonth'] ?? 'Next month') ?>"
+      ></button>
+    </div>
+
+    <table class="booking-calendar-field__grid" role="grid" aria-labelledby="<?= $labelId ?>">
+      <thead class="booking-calendar-field__head">
+        <tr class="booking-calendar-field__weekdays" data-calendar-weekdays></tr>
+      </thead>
+      <tbody class="booking-calendar-field__body" data-calendar-grid></tbody>
+    </table>
+
+    <p class="invisible booking-calendar-field__status" aria-live="polite" data-calendar-status></p>
+
+    <noscript class="booking-calendar-field__noscript">
+      <input
+        type="date"
+        class="booking-calendar-field__noscript-input"
+        name="<?= Contao\StringUtil::specialchars($this->name) ?>"
+        value="<?= Contao\StringUtil::specialchars($this->getIsoValue()) ?>"
+        aria-labelledby="<?= $labelId ?>"
+        <?php if ($this->mandatory): ?>required<?php endif; ?>
+      >
+    </noscript>
+  </div>
+<?php $this->endblock(); ?>
