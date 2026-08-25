@@ -1,8 +1,16 @@
 {% set label_id = 'ctrl_' ~ this.id ~ '_label' %}
 {% set error_id = 'ctrl_' ~ this.id ~ '_error' %}
+{% set help_id = 'help_ctrl_' ~ this.id %}
 {% set field_id = 'ctrl_' ~ this.id %}
 {% set translations = this.getTranslations() %}
 {% set has_errors = hasErrors.invoke() %}
+{% set described_by = [] %}
+{% if has_errors %}
+    {% set described_by = described_by|merge([error_id]) %}
+{% endif %}
+{% if this.help|default %}
+    {% set described_by = described_by|merge([help_id]) %}
+{% endif %}
 
 {% block widget %}
     <div class="{{ this.getWrapperClass() }}">
@@ -10,9 +18,9 @@
             {% if this.label %}
                 <label id="{{ label_id }}" class="{{ this.getLabelClass() }}">
                     {% if this.mandatory %}
-                        <span class="invisible">{{ this.mandatoryField }} </span>{{ this.label }}<span class="mandatory">*</span>
+                        <span class="invisible">{{ this.mandatoryField }} </span>{{ this.label|insert_tag_raw }}<span class="mandatory">*</span>
                     {% else %}
-                        {{ this.label }}
+                        {{ this.label|insert_tag_raw }}
                     {% endif %}
                 </label>
             {% endif %}
@@ -31,8 +39,9 @@
                 data-max-bookable-date="{{ this.getMaxBookableDateIso() }}"
                 data-translations="{{ this.getTranslationsJson()|raw }}"
                 role="group"
-                aria-labelledby="{{ label_id }}"
-                {% if has_errors %}aria-describedby="{{ error_id }}"{% endif %}
+                {% if this.label %}aria-labelledby="{{ label_id }}"{% endif %}
+                {% if described_by %}aria-describedby="{{ described_by|join(' ') }}"{% endif %}
+                {% if this.mandatory %}aria-required="true"{% endif %}
             >
                 <input
                     type="hidden"
@@ -106,7 +115,11 @@
                     ></button>
                 </div>
 
-                <table class="booking-calendar-field__grid" role="grid" aria-labelledby="{{ label_id }}">
+                <table
+                    class="booking-calendar-field__grid"
+                    role="grid"
+                    {% if this.label %}aria-labelledby="{{ label_id }}"{% endif %}
+                >
                     <thead class="booking-calendar-field__head">
                         <tr class="booking-calendar-field__weekdays" data-calendar-weekdays></tr>
                     </thead>
@@ -121,11 +134,16 @@
                         class="booking-calendar-field__noscript-input"
                         name="{{ this.name }}"
                         value="{{ this.getIsoValue() }}"
+                        {% if this.getMaxBookableDateIso() %}max="{{ this.getMaxBookableDateIso() }}"{% endif %}
                         aria-labelledby="{{ label_id }}"
                         {% if this.mandatory %}required{% endif %}
                     >
                 </noscript>
             </div>
+
+            {% if this.help|default %}
+                <p class="help" id="{{ help_id }}">{{ this.help|insert_tag_raw }}</p>
+            {% endif %}
         {% endblock %}
     </div>
 {% endblock %}

@@ -9,8 +9,12 @@
         "calendar"
     ],
     "type": "contao-bundle",
-    "version": "1.0.0",
     "license": "LGPL-3.0-or-later",
+    "homepage": "https://github.com/dievirtuellecouch/booking_calendar_fields",
+    "support": {
+        "issues": "https://github.com/dievirtuellecouch/booking_calendar_fields/issues",
+        "source": "https://github.com/dievirtuellecouch/booking_calendar_fields"
+    },
     "authors": [
         {
             "name": "Timo Werlich",
@@ -18,17 +22,28 @@
         }
     ],
     "require": {
-        "php": ">=8.2",
-        "contao/core-bundle": "^5.3",
-        "contao/manager-plugin": "^2.3"
+        "php": "^8.3",
+        "contao/core-bundle": "^5.7"
     },
     "conflict": {
         "contao/manager-plugin": "<2.0 || >=3.0"
+    },
+    "require-dev": {
+        "contao/manager-plugin": "^2.3.1",
+        "contao/test-case": "^5.7"
     },
     "autoload": {
         "psr-4": {
             "DVC\\BookingCalendarFields\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DVC\\BookingCalendarFields\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
     },
     "extra": {
         "contao-manager-plugin": "DVC\\BookingCalendarFields\\ContaoManager\\Plugin"

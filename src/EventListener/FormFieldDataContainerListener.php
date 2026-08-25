@@ -48,18 +48,20 @@ class FormFieldDataContainerListener
             return null;
         }
 
-        $postedType = $request->request->get('type');
+        $postedType = $request->request->getString('type');
 
-        if (is_string($postedType) && '' !== $postedType) {
+        if ('' !== $postedType) {
             return $postedType;
         }
 
-        $id = $request->query->get('id');
+        $id = $request->query->getInt('id');
 
-        if (!is_numeric($id)) {
+        if ($id < 1) {
             return null;
         }
 
-        return $this->connection->fetchOne('SELECT type FROM tl_form_field WHERE id = ?', [(int) $id]) ?: null;
+        $type = $this->connection->fetchOne('SELECT type FROM tl_form_field WHERE id = ?', [$id]);
+
+        return is_string($type) && '' !== $type ? $type : null;
     }
 }

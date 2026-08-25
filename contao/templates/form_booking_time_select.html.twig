@@ -1,5 +1,13 @@
 {% set error_id = 'ctrl_' ~ this.id ~ '_error' %}
+{% set help_id = 'help_ctrl_' ~ this.id %}
 {% set has_errors = hasErrors.invoke() %}
+{% set described_by = [] %}
+{% if has_errors %}
+    {% set described_by = described_by|merge([error_id]) %}
+{% endif %}
+{% if this.help|default %}
+    {% set described_by = described_by|merge([help_id]) %}
+{% endif %}
 
 {% block widget %}
     <div
@@ -11,9 +19,9 @@
             {% if this.label %}
                 <label for="ctrl_{{ this.id }}" class="{{ getLabelClass.invoke() }}">
                     {% if this.mandatory %}
-                        <span class="invisible">{{ this.mandatoryField }} </span>{{ this.label }}<span class="mandatory">*</span>
+                        <span class="invisible">{{ this.mandatoryField }} </span>{{ this.label|insert_tag_raw }}<span class="mandatory">*</span>
                     {% else %}
-                        {{ this.label }}
+                        {{ this.label|insert_tag_raw }}
                     {% endif %}
                 </label>
             {% endif %}
@@ -37,7 +45,7 @@
                 name="{{ this.name }}"
                 id="ctrl_{{ this.id }}"
                 class="{{ getControlClass.invoke() }}"
-                {% if has_errors %}aria-describedby="{{ error_id }}"{% endif %}
+                {% if described_by %}aria-describedby="{{ described_by|join(' ') }}"{% endif %}
                 {{ getAttributes.invoke()|raw }}
             >
                 {% for option in getOptions.invoke() %}
@@ -46,7 +54,7 @@
                     {% endif %}
 
                     {% if option.type == 'option' %}
-                        <option class="booking-time-select__option" value="{{ option.value }}"{{ option.selected|raw }}>{{ option.label }}</option>
+                        <option class="booking-time-select__option" value="{{ option.value }}"{{ option.selected|raw }}>{{ option.label|insert_tag_raw }}</option>
                     {% endif %}
 
                     {% if option.type == 'group_end' %}
@@ -54,6 +62,10 @@
                     {% endif %}
                 {% endfor %}
             </select>
+
+            {% if this.help|default %}
+                <p class="help" id="{{ help_id }}">{{ this.help|insert_tag_raw }}</p>
+            {% endif %}
         {% endblock %}
     </div>
 {% endblock %}

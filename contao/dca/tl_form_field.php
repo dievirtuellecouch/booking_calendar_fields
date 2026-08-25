@@ -7,7 +7,7 @@ use DVC\BookingCalendarFields\Widget\Frontend\BookingTimeSelectWidget;
 
 $GLOBALS['TL_DCA']['tl_form_field']['palettes'][BookingCalendarWidget::NAME] =
     '{type_legend},type,name,label;'
-    . '{fconfig_legend},mandatory;'
+    . '{fconfig_legend},mandatory,help;'
     . '{booking_calendar_legend},options,bookingCalendarUseMonthYearDropdowns,bookingCalendarMaxBookingDays;'
     . '{expert_legend:hide},class,accesskey;'
     . '{template_legend:hide},customTpl;'
@@ -15,7 +15,7 @@ $GLOBALS['TL_DCA']['tl_form_field']['palettes'][BookingCalendarWidget::NAME] =
 
 $GLOBALS['TL_DCA']['tl_form_field']['palettes'][BookingTimeSelectWidget::NAME] =
     '{type_legend},type,name,label;'
-    . '{fconfig_legend},mandatory;'
+    . '{fconfig_legend},mandatory,help;'
     . '{options_legend},options;'
     . '{expert_legend:hide},class,accesskey;'
     . '{template_legend:hide},customTpl;'
@@ -25,7 +25,7 @@ $GLOBALS['TL_DCA']['tl_form_field']['fields']['bookingCalendarUseMonthYearDropdo
     'label' => &$GLOBALS['TL_LANG']['tl_form_field']['bookingCalendarUseMonthYearDropdowns'],
     'exclude' => true,
     'inputType' => 'checkbox',
-    'default' => '1',
+    'default' => true,
     'eval' => [
         'tl_class' => 'w50 clr',
     ],
@@ -44,5 +44,9 @@ $GLOBALS['TL_DCA']['tl_form_field']['fields']['bookingCalendarMaxBookingDays'] =
         'maxlength' => 10,
         'tl_class' => 'w50',
     ],
-    'sql' => 'int(10) unsigned NOT NULL default 0',
+    'sql' => [
+        'type' => 'integer',
+        'unsigned' => true,
+        'default' => 0,
+    ],
 ];
